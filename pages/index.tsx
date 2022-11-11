@@ -1,11 +1,27 @@
 import type { NextPage } from "next"
 import { useState } from "react"
-import { NFTCard } from "./components/nftCard"
+import NFTCard from "../components/nftCard"
+
+export interface NftType {
+  id: {
+    tokenId: string
+  },
+  contract: {
+    address: string
+  },
+  description: string,
+  title: string,
+  media: Array<{
+    gateway: string,
+    raw: string
+  }>,
+  balance: string,
+}
 
 const Home: NextPage = () => {
   const [wallet, setWalletAddress] = useState("")
   const [collection, setCollectionAddress] = useState("")
-  const [NFTs, setNFTs] = useState([])
+  const [NFTs, setNFTs] = useState<NftType[]>([])
   const [fetchForCollection, setFetchForCollection] = useState(false)
   const fetchNFT = async () => {
     let nfts
@@ -89,7 +105,7 @@ const Home: NextPage = () => {
       </div>
       <div className="flex flex-wrap justify-around bg-slate-900 gap-9 py-32 mt-24">
         {
-          NFTs.length && NFTs.map((nft, index) => {
+          NFTs.length>0 && NFTs.map((nft, index) => {
             return (
               <NFTCard nft={nft} key={index}></NFTCard>
             )
