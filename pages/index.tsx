@@ -1,5 +1,6 @@
 import type { NextPage } from "next"
 import { useState } from "react"
+import { NFTCard } from "./components/nftCard"
 
 const Home: NextPage = () => {
   const [wallet, setWalletAddress] = useState("")
@@ -85,6 +86,15 @@ const Home: NextPage = () => {
           className={"disabled:bg-slate-500 text-white bg-blue-400 px-4 py-2 mt-3 rounded-sm w-1/5"}
         >Let's go!
         </button>
+      </div>
+      <div>
+        {
+          NFTs.length && NFTs.map((nft, index) => {
+            return (
+              <NFTCard nft={nft} key={index}></NFTCard>
+            )
+          })
+        }
       </div>
     </div>
   )
