@@ -5,10 +5,11 @@ const Home: NextPage = () => {
   const [wallet, setWalletAddress] = useState("")
   const [collection, setCollectionAddress] = useState("")
   const [NFTs, setNFTs] = useState([])
+  const [fetchForCollection, setFetchForCollection] = useState(false)
   const fetchNFT = async () => {
     let nfts
     console.log("fetching nft")
-    const api_key = process.env.API_KEY
+    const api_key = process.env.NEXT_PUBLIC_API_KEY
     const baseURL = `https://eth-mainnet.g.alchemy.com/v2/${api_key}/getNFTs/`
     let requestOptions = {
       method: "GET",
@@ -26,6 +27,23 @@ const Home: NextPage = () => {
       setNFTs(nfts.ownedNfts)
     }
   }
+
+  const fetchNFTsForCollection = async () => {
+    if (collection.length) {
+      let requestOptions = {
+        method: "GET",
+      }
+      const api_key = process.env.NEXT_PUBLIC_API_KEY
+      const baseURL = `https://eth-mainnet.g.alchemy.com/v2/${api_key}/getNFTsForCollection/`
+      const fetchURL = `${baseURL}?contractAddress=${collection}&withMetadata=${"true"}`
+      const nfts = await fetch(fetchURL, requestOptions).then(data => data.json())
+      if (nfts) {
+        console.log("NFTs in collection:", nfts)
+        setNFTs(nfts.nfts)
+      }
+    }
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <div className="flex flex-col w-full justify-center items-center gap-y-2">
@@ -47,9 +65,23 @@ const Home: NextPage = () => {
           placeholder="Add the collection address"
           className="border-2 border-gray-600 p-4"
         />
-        <label className="text-gray-600 "><input type={"checkbox"} className="mr-2"></input>Fetch for collection</label>
+        <label className="text-gray-600 "><input
+          onChange={(e) => {
+            setFetchForCollection(e.target.checked)
+          }}
+          type={"checkbox"} className="mr-2"
+        >
+        </input>Fetch for collection</label>
         <button
-          onClick={fetchNFT}
+          onClick={
+            () => {
+              if (fetchForCollection) {
+                fetchNFTsForCollection()
+              } else {
+                fetchNFT()
+              }
+            }
+          }
           className={"disabled:bg-slate-500 text-white bg-blue-400 px-4 py-2 mt-3 rounded-sm w-1/5"}
         >Let's go!
         </button>
